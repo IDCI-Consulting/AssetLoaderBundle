@@ -25,7 +25,7 @@ class Asset
      * @param string $templatePath
      * @param array $parameters
      */
-    public function __construct($templatePath, array $parameters)
+    public function __construct($templatePath, array $parameters = array())
     {
         $this->templatePath = $templatePath;
         $this->parameters   = $parameters;
