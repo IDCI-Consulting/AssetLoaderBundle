@@ -1,0 +1,29 @@
+{
+    "name": "idci/asset-loader-bundle",
+    "type": "symfony-bundle",
+    "description": "Symfony2 bundle that provides features to load assets",
+    "keywords": ["assets", "form", "loader", "twig"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Baptiste Bouchereau",
+            "email": "baptiste.bouchereau@idci-consulting.fr",
+            "homepage": "http://www.idci-consulting.fr"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.9",
+        "symfony/framework-bundle": "~2.8",
+        "twig/twig": "~1.34|~2.4"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~5.7",
+        "symfony/symfony": "~2.8"
+    },
+    "autoload": {
+        "psr-4": {
+            "IDCI\\Bundle\\AssetLoaderBundle\\": ""
+        }
+    },
+    "minimum-stability": "dev"
+}

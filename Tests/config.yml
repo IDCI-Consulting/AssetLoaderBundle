@@ -1,0 +1,12 @@
+framework:
+    secret: test
+
+twig:
+    paths:
+        '%kernel.root_dir%/templates': twig_path
+
+services:
+    fake_asset_provider:
+        class: IDCI\Bundle\AssetLoaderBundle\Tests\FakeAssetProvider
+        tags:
+            - { name: idci_asset_loader.asset_provider, alias: fake_asset_provider }

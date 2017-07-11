@@ -1,0 +1,24 @@
+services:
+    idci_asset_loader.asset_provider.registry:
+        class: IDCI\Bundle\AssetLoaderBundle\AssetProvider\AssetProviderRegistry
+
+    idci_asset_loader.asset_renderer:
+        class: IDCI\Bundle\AssetLoaderBundle\AssetRenderer\AssetRenderer
+        arguments:
+            - @twig
+
+    idci_asset_loader.asset_dom_loader:
+        class: IDCI\Bundle\AssetLoaderBundle\AssetLoader\AssetDOMLoader
+        arguments:
+            - @event_dispatcher
+            - @idci_asset_loader.asset_renderer
+            - @idci_asset_loader.asset_provider.registry
+
+    idci_asset_loader.asset_dom_loader_event_listener:
+        class: IDCI\Bundle\AssetLoaderBundle\AssetLoader\AssetDOMLoaderEventListener
+        arguments:
+            - @event_dispatcher
+            - @idci_asset_loader.asset_renderer
+            - @idci_asset_loader.asset_provider.registry
+        tags:
+            - { name: kernel.event_listener, event: kernel.reponse }
