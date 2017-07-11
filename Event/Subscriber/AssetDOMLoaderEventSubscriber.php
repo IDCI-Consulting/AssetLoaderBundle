@@ -5,24 +5,20 @@
  * @license: MIT
  */
 
-namespace IDCI\Bundle\AssetLoaderBundle\AssetLoader;
+namespace IDCI\Bundle\AssetLoaderBundle\Event\Subscriber;
 
 use IDCI\Bundle\AssetLoaderBundle\AssetProvider\AssetProviderRegistry;
 use IDCI\Bundle\AssetLoaderBundle\AssetRenderer\AssetRenderer;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\HttpKernel\KernelEvents;
 
-class AssetDOMLoaderEventListener
+class AssetDOMLoaderEventSubscriber implements EventSubscriberInterface
 {
     /**
-     * AssetRenderer
+     * @var AssetRenderer
      */
     private $assetRenderer;
-
-    /**
-     * EventDispatcherInterface
-     */
-    private $dispatcher;
 
     /**
      * @var AssetProviderRegistry
@@ -30,27 +26,51 @@ class AssetDOMLoaderEventListener
     private $assetProviderRegistry;
 
     /**
+     * @var bool
+     */
+    private $autoLoad;
+
+    /**
      * Constructor
      *
-     * @param EventDispatcherInterface $dispatcher
-     * @param AssetRenderer            $twig
+     * @param AssetRenderer            $assetRenderer
      * @param AssetProviderRegistry    $assetProviderRegistry
      * @param boolean                  $autoLoad
      */
     public function __construct(
-        EventDispatcherInterface $dispatcher,
-        AssetRenderer $twig,
+        AssetRenderer $assetRenderer,
         AssetProviderRegistry $assetProviderRegistry,
         $autoLoad
     ) {
-        $this->twig                  = $twig;
-        $this->dispatcher            = $dispatcher;
+        $this->assetRenderer         = $assetRenderer;
         $this->assetProviderRegistry = $assetProviderRegistry;
         $this->autoLoad              = $autoLoad;
     }
 
-    public function onKernelResponse(FilterResponseEvent $event)
+    /**
+     * {@inheritDoc}
+     */
+    public static function getSubscribedEvents()
     {
+        return array(
+            KernelEvents::RESPONSE => array(
+                array('appendAssets', 0),
+            )
+        );
+    }
+
+    /**
+     * Append the assets for all asset providers in the DOM
+     *
+     * @param FilterResponseEvent $event
+     * @throws \Exception
+     */
+    public function appendAssets(FilterResponseEvent $event)
+    {
+        if (!$event->isMasterRequest()) {
+            return;
+        }
+
         if (!$this->autoLoad) {
             return;
         }
@@ -60,7 +80,7 @@ class AssetDOMLoaderEventListener
         $pos = strripos($content, '</body>');
         $renderedAssets = '';
 
-        foreach ($this->assetProviderRegistry as $assetProvider) {
+        foreach ($this->assetProviderRegistry->getAll() as $assetProvider) {
             $renderedAssets .= $this->assetRenderer->renderAssets($assetProvider);
         }
 

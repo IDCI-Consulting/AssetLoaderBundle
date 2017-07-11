@@ -101,7 +101,7 @@ public function registerBundles()
 }
 ```
 
-If you want to activate the listener to load your assets automatically ([more on that later](#loading-your-assets-automatically), add the following in your config.yml file.
+If you want to activate the subscriber to load your assets automatically ([more on that later](#loading-your-assets-automatically), add the following in your config.yml file.
 
 ```yml
 # app/config/config.yml
@@ -164,7 +164,6 @@ services:
         tags:
             - { name: form.type, alias: my_type }
             - { name: idci_asset_loader.asset_provider, alias: my_type }
-
 ```
 
 ### Loading your assets manually
@@ -184,7 +183,7 @@ $this->get('idci_asset_loader.asset_dom_loader')->load('my_type');
 
 ### Loading your assets automatically
 
-In most case, you will just want to let the listener load all the assets for you. Simply set **auto_load** to true in the configuration.
+In most case, you will just want to let the subscriber load all the assets for you. Simply set **auto_load** to true in the configuration.
 
 Tests
 -----

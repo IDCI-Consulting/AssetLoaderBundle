@@ -14,11 +14,11 @@ services:
             - @idci_asset_loader.asset_renderer
             - @idci_asset_loader.asset_provider.registry
 
-    idci_asset_loader.asset_dom_loader_event_listener:
-        class: IDCI\Bundle\AssetLoaderBundle\AssetLoader\AssetDOMLoaderEventListener
+    idci_asset_loader.asset_dom_loader_event_subscriber:
+        class: IDCI\Bundle\AssetLoaderBundle\Event\Subscriber\AssetDOMLoaderEventSubscriber
         arguments:
-            - @event_dispatcher
             - @idci_asset_loader.asset_renderer
             - @idci_asset_loader.asset_provider.registry
+            - %idci_asset_loader.auto_load%
         tags:
-            - { name: kernel.event_listener, event: kernel.reponse }
+            - { name: kernel.event_subscriber }
