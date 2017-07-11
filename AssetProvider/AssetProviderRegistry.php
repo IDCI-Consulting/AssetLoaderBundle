@@ -15,6 +15,14 @@ class AssetProviderRegistry
     protected $assetProviders;
 
     /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->assetProviders = array();
+    }
+
+    /**
      * Sets an asset provider identify by an alias.
      *
      * @param string                 $alias         The asset provider alias
