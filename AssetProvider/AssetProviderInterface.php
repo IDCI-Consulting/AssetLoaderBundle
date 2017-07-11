@@ -7,14 +7,14 @@
 
 namespace IDCI\Bundle\AssetLoaderBundle\AssetProvider;
 
-use IDCI\Bundle\AssetLoaderBundle\Model\Asset;
+use IDCI\Bundle\AssetLoaderBundle\Model\AssetCollection;
 
 interface AssetProviderInterface
 {
     /**
      * Get the assets
      *
-     * @return Asset[]
+     * @return AssetCollection
      */
-    public function getAssets();
+    public function getAssetCollection();
 }

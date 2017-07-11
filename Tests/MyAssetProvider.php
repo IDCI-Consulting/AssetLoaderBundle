@@ -9,24 +9,29 @@ namespace IDCI\Bundle\AssetLoaderBundle\Tests;
 
 use IDCI\Bundle\AssetLoaderBundle\AssetProvider\AssetProviderInterface;
 use IDCI\Bundle\AssetLoaderBundle\Model\Asset;
+use IDCI\Bundle\AssetLoaderBundle\Model\AssetCollection;
 
 class MyAssetProvider implements AssetProviderInterface
 {
-    public function getAssets()
+    public function getAssetCollection()
     {
-        return array(
-            new Asset('@twig_path/asset1.html.twig', array(
-                'title' => 'asset1',
-                'options' => array('valid' => 'ok')
-            )),
-            new Asset('@twig_path/asset2.html.twig', array(
-                'title' => 'asset2',
-                'options' => array('valid' => 'ok')
-            )),
-            new Asset('@twig_path/asset1.html.twig', array(
-                'title' => 'asset1',
-                'options' => array('valid' => 'ok')
-            )),
-        );
+        $collection = new AssetCollection();
+
+        $collection->add(new Asset('@twig_path/asset1.html.twig', array(
+            'title' => 'asset1',
+            'options' => array('valid' => 'ok')
+        )));
+
+        $collection->add(new Asset('@twig_path/asset1.html.twig', array(
+            'title' => 'asset2',
+            'options' => array('valid' => 'ok')
+        )));
+
+        $collection->add(new Asset('@twig_path/asset1.html.twig', array(
+            'title' => 'asset1',
+            'options' => array('valid' => 'ok')
+        )));
+
+        return $collection;
     }
 }

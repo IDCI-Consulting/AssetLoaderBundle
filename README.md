@@ -117,8 +117,8 @@ Usage
 
 Adding assets to your form type is pretty simple:
 
- * Your **AbstractType** must implements the method **getAssets()** from the **AssetProviderInterface** interface. 
- The **getAssets** method must return an array of Asset Objects.
+ * Your **AbstractType** must implements the method **getAssetCollection()** from the **AssetProviderInterface** interface. 
+ The **getAssetCollection** contains an array of Asset Objects.
  * You must define your type as a service and add the tag with name **idci_asset_loader.asset_provider**
 
 In the example below, we load assets from a form type. An AssetProvider does not necessarily have to be a form type, any service will do the job.
@@ -129,15 +129,29 @@ AbstractType
 namespace MyBundle/Form/Type;
 
 use IDCI\Bundle\AssetLoaderBundle\AssetProvider\AssetProviderInterface;
-use IDCI\Bundle\AssetLoaderBundle\Model\Asset;
+use IDCI\Bundle\AssetLoaderBundle\Model\AssetCollection;
 
 class MyType extends AbstractType implements AssetProviderInterface
 {
-    private $assets = array();
+    /**
+     * @var AssetCollection
+     */
+    private $assetCollection;
 
-    public function getAssets()
+    /**
+     * Constructor
+     */
+    public function __construct()
     {
-        return $this->assets;
+        $this->assetCollection = new AssetCollection();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getAssetCollection()
+    {
+        return $this->assetCollection;
     }
 
     /**
@@ -145,7 +159,7 @@ class MyType extends AbstractType implements AssetProviderInterface
      */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
-        $this->assets[] = new Asset('MyBundle:Form:form_type_asset.html.twig', $options);
+        $this->assetCollection->add(new Asset('MyBundle:Form:form_type_asset.html.twig', $options));
         ...
 
         return $view->vars;

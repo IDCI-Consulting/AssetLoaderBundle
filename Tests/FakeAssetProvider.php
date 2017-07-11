@@ -8,17 +8,15 @@
 namespace IDCI\Bundle\AssetLoaderBundle\Tests;
 
 use IDCI\Bundle\AssetLoaderBundle\AssetProvider\AssetProviderInterface;
-use IDCI\Bundle\AssetLoaderBundle\Model\Asset;
+use IDCI\Bundle\AssetLoaderBundle\Model\AssetCollection;
 
 class FakeAssetProvider implements AssetProviderInterface
 {
     /**
      * {@inheritDoc}
      */
-    public function getAssets()
+    public function getAssetCollection()
     {
-        return array(
-
-        );
+        return new AssetCollection();
     }
 }
