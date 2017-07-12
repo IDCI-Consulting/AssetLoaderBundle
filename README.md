@@ -169,6 +169,18 @@ class MyType extends AbstractType implements AssetProviderInterface
 }
 ```
 
+If you have multiple assets which must be loaded in a predicatble order, you can add a priority to the Asset (-1 by default). 
+The higher the priority, the sooner it will be load in the DOM.
+
+```php
+$this->assetCollection->add(new Asset('MyBundle:Form:form_type_asset_1.html.twig', array(), 0));
+$this->assetCollection->add(new Asset('MyBundle:Form:form_type_asset_2.html.twig', array(
+    'options' => $options,
+    'form'    => $view
+), 1));
+
+```
+
 Services.yml
 
 ```yml

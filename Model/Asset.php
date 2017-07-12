@@ -20,15 +20,22 @@ class Asset
     protected $parameters;
 
     /**
+     * @var int
+     */
+    protected $priority;
+
+    /**
      * Constructor
      *
      * @param string $templatePath
      * @param array $parameters
+     * @param int $priority
      */
-    public function __construct($templatePath, array $parameters = array())
+    public function __construct($templatePath, array $parameters = array(), $priority = -1)
     {
         $this->templatePath = $templatePath;
         $this->parameters   = $parameters;
+        $this->priority     = $priority;
     }
 
     /**
@@ -38,11 +45,20 @@ class Asset
     {
         return $this->templatePath;
     }
+
     /**
      * Get the asset parameters
      */
     public function getParameters()
     {
         return $this->parameters;
+    }
+
+    /**
+     * Get the asset priority
+     */
+    public function getPriority()
+    {
+        return $this->priority;
     }
 }

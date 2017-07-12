@@ -44,6 +44,21 @@ class AssetCollection
      */
     public function getAll()
     {
+        usort($this->collection, array($this, 'sortAssetsByPriority'));
+
         return $this->collection;
+    }
+
+    /**
+     * Method to sort the assets by priority
+     *
+     * @param Asset $a
+     * @param Asset $b
+     *
+     * @return boolean
+     */
+    private function sortAssetsByPriority(Asset $a, Asset $b)
+    {
+        return $a->getPriority() - $b->getPriority();
     }
 }
