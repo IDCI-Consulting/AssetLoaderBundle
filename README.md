@@ -129,6 +129,7 @@ AbstractType
 namespace MyBundle/Form/Type;
 
 use IDCI\Bundle\AssetLoaderBundle\AssetProvider\AssetProviderInterface;
+use IDCI\Bundle\AssetLoaderBundle\Model\Asset;
 use IDCI\Bundle\AssetLoaderBundle\Model\AssetCollection;
 
 class MyType extends AbstractType implements AssetProviderInterface
