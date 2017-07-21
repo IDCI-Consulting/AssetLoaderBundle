@@ -20,17 +20,17 @@ class MyAssetProvider implements AssetProviderInterface
         $collection->add(new Asset('@twig_path/asset1.html.twig', array(
             'title' => 'asset1',
             'options' => array('valid' => 'ok')
-        )));
+        ), 0));
 
         $collection->add(new Asset('@twig_path/asset1.html.twig', array(
             'title' => 'asset2',
             'options' => array('valid' => 'ok')
-        )));
+        ), 1));
 
         $collection->add(new Asset('@twig_path/asset1.html.twig', array(
             'title' => 'asset1',
             'options' => array('valid' => 'ok')
-        )));
+        ), 0));
 
         return $collection;
     }

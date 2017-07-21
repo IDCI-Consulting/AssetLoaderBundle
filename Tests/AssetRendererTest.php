@@ -36,6 +36,6 @@ class AssetRendererTest extends WebTestCase
 
         $renderedAssets = $this->assetRenderer->renderAssets($assetProvider);
 
-        $this->assertEquals($renderedAssets, 'asset1asset2');
+        $this->assertEquals('asset2asset1', $renderedAssets);
     }
 }
