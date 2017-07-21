@@ -10,6 +10,7 @@ namespace IDCI\Bundle\AssetLoaderBundle\AssetLoader;
 use IDCI\Bundle\AssetLoaderBundle\AssetProvider\AssetProviderInterface;
 use IDCI\Bundle\AssetLoaderBundle\AssetProvider\AssetProviderRegistry;
 use IDCI\Bundle\AssetLoaderBundle\AssetRenderer\AssetRenderer;
+use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class AssetDOMLoader
@@ -38,10 +39,10 @@ class AssetDOMLoader
      */
     public function __construct(
         EventDispatcherInterface $dispatcher,
-        AssetRenderer $twig,
+        AssetRenderer $assetRenderer,
         AssetProviderRegistry $assetProviderRegistry
     ) {
-        $this->twig = $twig;
+        $this->assetRenderer = $assetRenderer;
         $this->dispatcher = $dispatcher;
         $this->assetProviderRegistry = $assetProviderRegistry;
     }
@@ -53,11 +54,12 @@ class AssetDOMLoader
      */
     public function load($assetProvider)
     {
+        $renderedAssets = array();
         if (!$assetProvider instanceof AssetProviderInterface) {
             $assetProvider = $this->assetProviderRegistry->getOneByAlias($assetProvider);
         }
 
-        $renderedAssets = $this->assetRenderer->renderAssets($assetProvider);
+        $renderedAssets[] = $this->assetRenderer->renderAssets($assetProvider);
 
         $this->appendHtmlToDOM($renderedAssets);
     }
@@ -67,9 +69,9 @@ class AssetDOMLoader
      */
     public function loadAll()
     {
-        $renderedAssets = '';
+        $renderedAssets = array();
         foreach ($this->assetProviderRegistry as $assetProvider) {
-            $renderedAssets .= $this->assetRenderer->renderAssets($assetProvider);
+            $renderedAssets[] = $this->assetRenderer->renderAssets($assetProvider);
         }
 
         $this->appendHtmlToDOM($renderedAssets);
@@ -78,19 +80,37 @@ class AssetDOMLoader
     /**
      * Append HTML at the end of the body
      *
-     * @param $html
+     * @param array $html
      */
-    private function appendHTMLToDOM($html)
+    private function appendHTMLToDOM(array $renderedAssets)
     {
-        $this->dispatcher->addListener('kernel.response', function ($event) use ($html) {
+        $this->dispatcher->addListener(KernelEvents::RESPONSE, function ($event) use ($renderedAssets) {
             $response = $event->getResponse();
-            $content = $response->getContent();
+            $content = $newContent = $response->getContent();
             $pos = strripos($content, '</body>');
 
-            $newContent = substr($content, 0, $pos) . $html . substr($content, $pos);
+            foreach ($renderedAssets as $renderedAsset) {
+                if (!self::isLoaded($renderedAsset, $content)) {
+                    $newContent = substr($content, 0, $pos) . $renderedAsset . substr($content, $pos);
+                }
+            }
 
             $response->setContent($newContent);
             $event->setResponse($response);
         });
     }
+
+    /**
+     * Check if an asset is already in DOM.
+     *
+     * @param string $assetContent
+     * @param string $html
+     *
+     * @return boolean
+     */
+    public static function isLoaded($assetContent, $html)
+    {
+        return (false !== strpos($html, $assetContent)) ? true : false;
+    }
 }
+
