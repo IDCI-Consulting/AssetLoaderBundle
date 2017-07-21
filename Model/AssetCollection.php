@@ -59,6 +59,6 @@ class AssetCollection
      */
     private function sortAssetsByPriority(Asset $a, Asset $b)
     {
-        return $a->getPriority() - $b->getPriority();
+        return $b->getPriority() - $a->getPriority();
     }
 }
