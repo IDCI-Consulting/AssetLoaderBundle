@@ -70,7 +70,7 @@ class AssetDOMLoader
     public function loadAll()
     {
         $renderedAssets = array();
-        foreach ($this->assetProviderRegistry as $assetProvider) {
+        foreach ($this->assetProviderRegistry->getAll() as $assetProvider) {
             $renderedAssets[] = $this->assetRenderer->renderAssets($assetProvider);
         }
 
@@ -86,16 +86,16 @@ class AssetDOMLoader
     {
         $this->dispatcher->addListener(KernelEvents::RESPONSE, function ($event) use ($renderedAssets) {
             $response = $event->getResponse();
-            $content = $newContent = $response->getContent();
+            $content = $response->getContent();
             $pos = strripos($content, '</body>');
 
             foreach ($renderedAssets as $renderedAsset) {
                 if (!self::isLoaded($renderedAsset, $content)) {
-                    $newContent = substr($content, 0, $pos) . $renderedAsset . substr($content, $pos);
+                    $content = substr($content, 0, $pos) . $renderedAsset . substr($content, $pos);
                 }
             }
 
-            $response->setContent($newContent);
+            $response->setContent($content);
             $event->setResponse($response);
         });
     }

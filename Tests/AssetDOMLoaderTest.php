@@ -26,46 +26,81 @@ class AssetDOMLoaderTest extends TestCase
 
     private $assetDOMLoader;
 
+    private $assetProviderRegistry;
+
     /**
      * {@inheritDoc}
      */
     public function setUp()
     {
         $twigPath = __DIR__.'/templates';
-        $assetProvider = new MyAssetProvider();
         $fileSystemLoader = new \Twig_Loader_Filesystem();
         $fileSystemLoader->addPath(__DIR__.'/templates', 'twig_path');
         $assetRenderer = new AssetRenderer(new \Twig_Environment($fileSystemLoader, array(
             'cache' => 'cache',
         )));
-        $assetProviderRegistry = new AssetProviderRegistry();
-        $assetProviderRegistry->set('my_provider', $assetProvider);
-
         $this->dispatcher = new EventDispatcher();
         $this->kernel = $this->getMockBuilder('Symfony\Component\HttpKernel\HttpKernelInterface')->getMock();
-        $this->assetDOMLoader = new AssetDOMLoader($this->dispatcher, $assetRenderer, $assetProviderRegistry);
-    }
 
-    public function testLoad()
-    {
-        $html =<<<EOF
+        $this->assetProviderRegistry = new AssetProviderRegistry();
+        $this->assetProviderRegistry->set('my_provider', new MyAssetProvider());
+        $this->assetProviderRegistry->set('my_another_provider', new MyAnotherAssetProvider());
+
+        $this->html =<<<EOF
 <html>
     <head></head>
     <body></body>
 </html>
 EOF;
 
+        $this->assetDOMLoader = new AssetDOMLoader($this->dispatcher, $assetRenderer, $this->assetProviderRegistry);
+    }
+
+    public function testLoad()
+    {
         $expectedHtml =<<<EOF
 <html>
     <head></head>
     <body>asset2asset1</body>
 </html>
 EOF;
-        $response = new Response($html);
-        $event = new FilterResponseEvent($this->kernel, new Request(), HttpKernelInterface::MASTER_REQUEST, $response);
-
+        $event = $this->createEvent();
         $this->assetDOMLoader->load('my_provider');
         $this->dispatcher->dispatch(KernelEvents::RESPONSE, $event);
         $this->assertEquals($expectedHtml, $event->getResponse()->getContent());
+    }
+
+
+    public function testLoadAll()
+    {
+        $expectedHtml =<<<EOF
+<html>
+    <head></head>
+    <body>asset3asset1asset2asset1</body>
+</html>
+EOF;
+
+        $event = $this->createEvent();
+
+        $this->assetDOMLoader->loadAll();
+        $this->dispatcher->dispatch(KernelEvents::RESPONSE, $event);
+        $this->assertEquals($expectedHtml, $event->getResponse()->getContent());
+
+        // Add a new provider with same assets.
+        $this->assetProviderRegistry->set('my_provider_bis', new MyAssetProvider());
+
+        $this->assetDOMLoader->loadAll();
+        $this->dispatcher->dispatch(KernelEvents::RESPONSE, $event);
+        $this->assertEquals($expectedHtml, $event->getResponse()->getContent());
+    }
+
+    private function createEvent()
+    {
+        return new FilterResponseEvent(
+            $this->kernel,
+            new Request(),
+            HttpKernelInterface::MASTER_REQUEST,
+            new Response($this->html)
+        );
     }
 }
