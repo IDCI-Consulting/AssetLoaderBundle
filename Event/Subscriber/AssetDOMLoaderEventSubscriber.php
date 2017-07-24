@@ -9,6 +9,7 @@ namespace IDCI\Bundle\AssetLoaderBundle\Event\Subscriber;
 
 use IDCI\Bundle\AssetLoaderBundle\AssetProvider\AssetProviderRegistry;
 use IDCI\Bundle\AssetLoaderBundle\AssetRenderer\AssetRenderer;
+use IDCI\Bundle\AssetLoaderBundle\AssetLoader\AssetDOMLoader;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
@@ -78,13 +79,14 @@ class AssetDOMLoaderEventSubscriber implements EventSubscriberInterface
         $response = $event->getResponse();
         $content = $response->getContent();
         $pos = strripos($content, '</body>');
-        $renderedAssets = '';
 
         foreach ($this->assetProviderRegistry->getAll() as $assetProvider) {
-            $renderedAssets .= $this->assetRenderer->renderAssets($assetProvider);
-        }
+            $renderedAsset = $this->assetRenderer->renderAssets($assetProvider);
 
-        $newContent = substr($content, 0, $pos) . $renderedAssets . substr($content, $pos);
+            if (!AssetDOMLoader::isLoaded($renderedAsset, $content)) {
+                $newContent = substr($content, 0, $pos) . $renderedAsset . substr($content, $pos);
+            }
+        }
 
         $response->setContent($newContent);
         $event->setResponse($response);

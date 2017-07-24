@@ -30,12 +30,12 @@ class AssetRendererTest extends WebTestCase
         $this->assetRenderer = $container->get('idci_asset_loader.asset_renderer');
     }
 
-    public function testRenderAssets()
+    public function testGetRenderedAssets()
     {
         $assetProvider = new MyAssetProvider();
 
-        $renderedAssets = $this->assetRenderer->renderAssets($assetProvider);
+        $renderedAssets = $this->assetRenderer->getRenderedAssets($assetProvider);
 
-        $this->assertEquals('asset2asset1', $renderedAssets);
+        $this->assertEquals(array('asset2', 'asset1'), $renderedAssets);
     }
 }
