@@ -76,18 +76,11 @@ EOF;
         $expectedHtml =<<<EOF
 <html>
     <head></head>
-    <body>asset3asset1asset2asset1</body>
+    <body>asset2asset1asset3</body>
 </html>
 EOF;
 
         $event = $this->createEvent();
-
-        $this->assetDOMLoader->loadAll();
-        $this->dispatcher->dispatch(KernelEvents::RESPONSE, $event);
-        $this->assertEquals($expectedHtml, $event->getResponse()->getContent());
-
-        // Add a new provider with same assets.
-        $this->assetProviderRegistry->set('my_provider_bis', new MyAssetProvider());
 
         $this->assetDOMLoader->loadAll();
         $this->dispatcher->dispatch(KernelEvents::RESPONSE, $event);

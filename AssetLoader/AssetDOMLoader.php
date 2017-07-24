@@ -54,14 +54,11 @@ class AssetDOMLoader
      */
     public function load($assetProvider)
     {
-        $renderedAssets = array();
         if (!$assetProvider instanceof AssetProviderInterface) {
             $assetProvider = $this->assetProviderRegistry->getOneByAlias($assetProvider);
         }
 
-        $renderedAssets[] = $this->assetRenderer->renderAssets($assetProvider);
-
-        $this->appendHtmlToDOM($renderedAssets);
+        $this->appendHtmlToDOM($this->assetRenderer->getRenderedAssets($assetProvider));
     }
 
     /**
@@ -71,7 +68,7 @@ class AssetDOMLoader
     {
         $renderedAssets = array();
         foreach ($this->assetProviderRegistry->getAll() as $assetProvider) {
-            $renderedAssets[] = $this->assetRenderer->renderAssets($assetProvider);
+            $renderedAssets = array_unique(array_merge($renderedAssets, $this->assetRenderer->getRenderedAssets($assetProvider)));
         }
 
         $this->appendHtmlToDOM($renderedAssets);
@@ -89,12 +86,14 @@ class AssetDOMLoader
             $content = $response->getContent();
             $pos = strripos($content, '</body>');
 
+            $assets = '';
             foreach ($renderedAssets as $renderedAsset) {
                 if (!self::isLoaded($renderedAsset, $content)) {
-                    $content = substr($content, 0, $pos) . $renderedAsset . substr($content, $pos);
+                    $assets .= $renderedAsset;
                 }
             }
 
+            $content = substr($content, 0, $pos) . $assets . substr($content, $pos);
             $response->setContent($content);
             $event->setResponse($response);
         });

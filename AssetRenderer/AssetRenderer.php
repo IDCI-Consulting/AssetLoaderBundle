@@ -28,11 +28,18 @@ class AssetRenderer
         $this->twig = $twig;
     }
 
-    public function renderAssets(AssetProviderInterface $assetProvider)
+    /**
+     * Get rendered assets.
+     *
+     * @param AssetProviderInterface $assetProvider
+     *
+     * @return array
+     */
+    public function getRenderedAssets(AssetProviderInterface $assetProvider)
     {
-        $renderedAssets = '';
+        $renderedAssets = array();
         foreach ($assetProvider->getAssetCollection()->getAll() as $asset) {
-            $renderedAssets .= $this->twig->render(
+            $renderedAssets[] = $this->twig->render(
                 $asset->getTemplatePath(),
                 $asset->getParameters()
             );
