@@ -76,19 +76,21 @@ class AssetDOMLoaderEventSubscriber implements EventSubscriberInterface
             return;
         }
 
+        $getRenderedAssetsFromProvider = function($assetProvider) {
+            return array_unique(
+                array_merge(
+                    $renderedAssets,
+                    $this->assetRenderer->getRenderedAssets($assetProvider)
+                )
+            );
+        };
+
+        $renderedAssets = array_map($getRenderedAssetsFromProvider, $this->assetProviderRegistry->getAll());
+
         $response = $event->getResponse();
-        $content = $response->getContent();
-        $pos = strripos($content, '</body>');
+        $content = AssetDOMLoader::append($renderedAssets, $response->getContent());
 
-        foreach ($this->assetProviderRegistry->getAll() as $assetProvider) {
-            $renderedAsset = $this->assetRenderer->renderAssets($assetProvider);
-
-            if (!AssetDOMLoader::isLoaded($renderedAsset, $content)) {
-                $newContent = substr($content, 0, $pos) . $renderedAsset . substr($content, $pos);
-            }
-        }
-
-        $response->setContent($newContent);
+        $response->setContent($content);
         $event->setResponse($response);
     }
 }
