@@ -58,7 +58,7 @@ class AssetDOMLoader
             $assetProvider = $this->assetProviderRegistry->getOneByAlias($assetProvider);
         }
 
-        $this->appendHtmlToDOM($this->assetRenderer->getRenderedAssets($assetProvider));
+        $this->addLoaderListener($this->assetRenderer->getRenderedAssets($assetProvider));
     }
 
     /**
@@ -71,7 +71,7 @@ class AssetDOMLoader
             $renderedAssets = array_unique(array_merge($renderedAssets, $this->assetRenderer->getRenderedAssets($assetProvider)));
         }
 
-        $this->appendHtmlToDOM($renderedAssets);
+        $this->addLoaderListener($renderedAssets);
     }
 
     /**
@@ -79,24 +79,39 @@ class AssetDOMLoader
      *
      * @param array $html
      */
-    private function appendHTMLToDOM(array $renderedAssets)
+    private function addLoaderListener(array $renderedAssets)
     {
         $this->dispatcher->addListener(KernelEvents::RESPONSE, function ($event) use ($renderedAssets) {
             $response = $event->getResponse();
             $content = $response->getContent();
-            $pos = strripos($content, '</body>');
 
-            $assets = '';
-            foreach ($renderedAssets as $renderedAsset) {
-                if (!self::isLoaded($renderedAsset, $content)) {
-                    $assets .= $renderedAsset;
-                }
-            }
+            $content = self::append($renderedAssets, $content);
 
-            $content = substr($content, 0, $pos) . $assets . substr($content, $pos);
             $response->setContent($content);
             $event->setResponse($response);
         });
+    }
+
+    /**
+     * Append assets to content
+     *
+     * @param array $renderedAssets
+     * @param string $content
+     *
+     * @return string
+     */
+    public static function append(array $renderedAssets, $content)
+    {
+        $pos = strripos($content, '</body>');
+
+        $assets = '';
+        foreach ($renderedAssets as $renderedAsset) {
+            if (!self::isLoaded($renderedAsset, $content)) {
+                $assets .= $renderedAsset;
+            }
+        }
+
+        return substr($content, 0, $pos) . $assets . substr($content, $pos);
     }
 
     /**
@@ -112,4 +127,3 @@ class AssetDOMLoader
         return (false !== strpos($html, $assetContent)) ? true : false;
     }
 }
-
