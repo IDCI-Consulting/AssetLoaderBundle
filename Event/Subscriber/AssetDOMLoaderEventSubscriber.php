@@ -29,23 +29,31 @@ class AssetDOMLoaderEventSubscriber implements EventSubscriberInterface
     /**
      * @var bool
      */
-    private $autoLoad;
+    private $loadAll;
+
+    /**
+     * @var array
+     */
+    private $loadOnly;
 
     /**
      * Constructor
      *
      * @param AssetRenderer            $assetRenderer
      * @param AssetProviderRegistry    $assetProviderRegistry
-     * @param boolean                  $autoLoad
+     * @param boolean                  $loadAll
+     * @param array                    $loadOnly
      */
     public function __construct(
         AssetRenderer $assetRenderer,
         AssetProviderRegistry $assetProviderRegistry,
-        $autoLoad
+        $loadAll,
+        $loadOnly
     ) {
         $this->assetRenderer         = $assetRenderer;
         $this->assetProviderRegistry = $assetProviderRegistry;
-        $this->autoLoad              = $autoLoad;
+        $this->loadAll               = $loadAll;
+        $this->loadOnly              = $loadOnly;
     }
 
     /**
@@ -72,13 +80,22 @@ class AssetDOMLoaderEventSubscriber implements EventSubscriberInterface
             return;
         }
 
-        if (!$this->autoLoad) {
+        if (!$this->loadAll && empty($this->loadOnly)) {
             return;
         }
 
+        if ($this->loadAll) {
+          $assetProviders = $this->assetProviderRegistry->getAll();
+        } else {
+          $assetProviders = $this->filterProviders();
+        }
+
         $renderedAssets = array();
-        foreach ($this->assetProviderRegistry->getAll() as $assetProvider) {
-            $renderedAssets = array_unique(array_merge($renderedAssets, $this->assetRenderer->getRenderedAssets($assetProvider)));
+        foreach ($assetProviders as $assetProvider) {
+            $renderedAssets = array_unique(array_merge(
+                $renderedAssets,
+                $this->assetRenderer->getRenderedAssets($assetProvider)
+            ));
         }
 
         $response = $event->getResponse();
@@ -86,5 +103,20 @@ class AssetDOMLoaderEventSubscriber implements EventSubscriberInterface
 
         $response->setContent($content);
         $event->setResponse($response);
+    }
+
+    /**
+     * Filter the providers with the loadOnly parameter
+     *
+     * @return array
+     */
+    private function filterProviders()
+    {
+        $providers = array();
+        foreach ($this->loadOnly as $providerAlias) {
+          $providers[] = $this->assetProviderRegistry->getOneByAlias($providerAlias);
+        }
+
+        return $providers;
     }
 }

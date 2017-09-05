@@ -24,6 +24,8 @@ class AssetDOMLoaderEventSubscriberTest extends TestCase
 {
     private $assetProviderRegistry;
 
+    private $assetRender;
+
     /**
      * {@inheritDoc}
      */
@@ -32,7 +34,7 @@ class AssetDOMLoaderEventSubscriberTest extends TestCase
         $twigPath = __DIR__.'/templates';
         $fileSystemLoader = new \Twig_Loader_Filesystem();
         $fileSystemLoader->addPath(__DIR__.'/templates', 'twig_path');
-        $assetRenderer = new AssetRenderer(new \Twig_Environment($fileSystemLoader, array(
+        $this->assetRenderer = new AssetRenderer(new \Twig_Environment($fileSystemLoader, array(
             'cache' => 'cache',
         )));
 
@@ -47,12 +49,17 @@ class AssetDOMLoaderEventSubscriberTest extends TestCase
     <body></body>
 </html>
 EOF;
-
-        $this->assetDOMLoaderEventSubsriber = new AssetDOMLoaderEventSubscriber($assetRenderer, $this->assetProviderRegistry, true);
     }
 
     public function testAppendAssets()
     {
+        $this->assetDOMLoaderEventSubscriber = new AssetDOMLoaderEventSubscriber(
+            $this->assetRenderer,
+            $this->assetProviderRegistry,
+            true,
+            array()
+        );
+
         $expectedHtml =<<<EOF
 <html>
     <head></head>
@@ -60,7 +67,27 @@ EOF;
 </html>
 EOF;
         $event = $this->createEvent();
-        $this->assetDOMLoaderEventSubsriber->appendAssets($event);
+        $this->assetDOMLoaderEventSubscriber->appendAssets($event);
+        $this->assertEquals($expectedHtml, $event->getResponse()->getContent());
+    }
+
+    public function testAppendOnlySomeAssets()
+    {
+        $this->assetDOMLoaderEventSubscriber = new AssetDOMLoaderEventSubscriber(
+            $this->assetRenderer,
+            $this->assetProviderRegistry,
+            false,
+            array('my_another_provider')
+        );
+
+        $expectedHtml =<<<EOF
+<html>
+    <head></head>
+    <body>asset3asset1</body>
+</html>
+EOF;
+        $event = $this->createEvent();
+        $this->assetDOMLoaderEventSubscriber->appendAssets($event);
         $this->assertEquals($expectedHtml, $event->getResponse()->getContent());
     }
 

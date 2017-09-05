@@ -19,6 +19,7 @@ services:
         arguments:
             - @idci_asset_loader.asset_renderer
             - @idci_asset_loader.asset_provider.registry
-            - %idci_asset_loader.auto_load%
+            - %idci_asset_loader.providers.load_all%
+            - %idci_asset_loader.providers.load_only%
         tags:
             - { name: kernel.event_subscriber }

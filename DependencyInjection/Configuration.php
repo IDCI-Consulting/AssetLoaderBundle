@@ -27,8 +27,16 @@ class Configuration implements ConfigurationInterface
 
         $rootNode
             ->children()
-                ->booleanNode('auto_load')
-                    ->defaultFalse()
+                ->arrayNode('providers')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->booleanNode('load_all')
+                            ->defaultFalse()
+                        ->end()
+                        ->arrayNode('load_only')
+                            ->prototype('scalar')->defaultValue(array())->end()
+                        ->end()
+                    ->end()
                 ->end()
             ->end()
         ;

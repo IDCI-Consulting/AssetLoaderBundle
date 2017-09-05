@@ -26,7 +26,8 @@ class IDCIAssetLoaderExtension extends Extension
     {
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
-        $container->setParameter('idci_asset_loader.auto_load', $config['auto_load']);
+        $container->setParameter('idci_asset_loader.providers.load_all', $config['providers']['load_all']);
+        $container->setParameter('idci_asset_loader.providers.load_only', $config['providers']['load_only']);
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');

@@ -9,7 +9,7 @@ A recurrent issue which comes up is the loading of front dependencies embedded t
 
 ### Issue 1 - dependencies order
 
-Let's say you want to create a form type, child of the text form type, 
+Let's say you want to create a form type, child of the text form type,
 whose widget will color the background of the input type text; as soon as the input is empty.
 Your widget will look like this:
 
@@ -47,7 +47,7 @@ As you can see, this javascript code requires jQuery.
 JQuery will not be available when this script will be executed
 (unless you place the Jquery script in the head of the html document, but we don't want that)
 
-A possible solution would be to wrap this code with the following vanilla function 
+A possible solution would be to wrap this code with the following vanilla function
 
 ```javascript
 window.addEventListener('load', function () {
@@ -107,7 +107,8 @@ If you want to activate the subscriber to load your assets automatically ([more 
 # app/config/config.yml
 
 idci_asset_loader:
-    auto_load: true
+    providers:
+        load_all: true
 ```
 
 Usage
@@ -117,7 +118,7 @@ Usage
 
 Adding assets to your form type is pretty simple:
 
- * Your **AbstractType** must implements the method **getAssetCollection()** from the **AssetProviderInterface** interface. 
+ * Your **AbstractType** must implements the method **getAssetCollection()** from the **AssetProviderInterface** interface.
  The **getAssetCollection** contains an array of Asset Objects.
  * You must define your type as a service and add the tag with name **idci_asset_loader.asset_provider**
 
@@ -170,7 +171,7 @@ class MyType extends AbstractType implements AssetProviderInterface
 }
 ```
 
-If you have multiple assets which must be loaded in a predicatble order, you can add a priority to the Asset (-1 by default). 
+If you have multiple assets which must be loaded in a predicatble order, you can add a priority to the Asset (-1 by default).
 The higher the priority, the sooner it will be load in the DOM.
 
 ```php
@@ -210,7 +211,30 @@ $this->get('idci_asset_loader.asset_dom_loader')->load('my_type');
 
 ### Loading your assets automatically
 
-In most case, you will just want to let the subscriber load all the assets for you. Simply set **auto_load** to true in the configuration.
+In most case, you will just want to let the subscriber load all the assets for you.
+To load all the assets from all providers:
+
+```yml
+# app/config/config.yml
+
+idci_asset_loader:
+    providers:
+        load_all: true
+```
+
+You can also load some specific providers. If load_all is set to true, the following will have no impact.
+
+
+```yml
+# app/config/config.yml
+
+idci_asset_loader:
+    providers:
+        load_only:
+            - my_provider_service_alias_1
+            - my_provider_service_alias_2
+          # - ...
+```
 
 Tests
 -----
