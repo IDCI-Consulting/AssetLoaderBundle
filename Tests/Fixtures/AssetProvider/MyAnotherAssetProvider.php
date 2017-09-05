@@ -5,7 +5,7 @@
  * @license: MIT
  */
 
-namespace IDCI\Bundle\AssetLoaderBundle\Tests;
+namespace IDCI\Bundle\AssetLoaderBundle\Tests\Fixtures\AssetProvider;
 
 use IDCI\Bundle\AssetLoaderBundle\AssetProvider\AssetProviderInterface;
 use IDCI\Bundle\AssetLoaderBundle\Model\Asset;

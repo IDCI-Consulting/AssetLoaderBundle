@@ -10,6 +10,8 @@ namespace IDCI\Bundle\AssetLoaderBundle\Tests;
 use IDCI\Bundle\AssetLoaderBundle\AssetProvider\AssetProviderRegistry;
 use IDCI\Bundle\AssetLoaderBundle\AssetRenderer\AssetRenderer;
 use IDCI\Bundle\AssetLoaderBundle\AssetLoader\AssetDOMLoader;
+use IDCI\Bundle\AssetLoaderBundle\Tests\Fixtures\AssetProvider\MyAssetProvider;
+use IDCI\Bundle\AssetLoaderBundle\Tests\Fixtures\AssetProvider\MyAnotherAssetProvider;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpFoundation\Request;

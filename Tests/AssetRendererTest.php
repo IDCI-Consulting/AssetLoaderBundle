@@ -9,6 +9,7 @@ namespace IDCI\Bundle\AssetLoaderBundle\Tests;
 
 use IDCI\Bundle\AssetLoaderBundle\AssetRenderer\AssetRenderer;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use IDCI\Bundle\AssetLoaderBundle\Tests\Fixtures\AssetProvider\MyAssetProvider;
 
 class AssetRendererTest extends WebTestCase
 {
