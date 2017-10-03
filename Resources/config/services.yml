@@ -1,25 +1,25 @@
 services:
-    idci_asset_loader.asset_provider.registry:
+    IDCI\Bundle\AssetLoaderBundle\AssetProvider\AssetProviderRegistry:
         class: IDCI\Bundle\AssetLoaderBundle\AssetProvider\AssetProviderRegistry
 
-    idci_asset_loader.asset_renderer:
+    IDCI\Bundle\AssetLoaderBundle\AssetRenderer\AssetRenderer:
         class: IDCI\Bundle\AssetLoaderBundle\AssetRenderer\AssetRenderer
         arguments:
-            - @twig
+            - '@twig'
 
-    idci_asset_loader.asset_dom_loader:
+    IDCI\Bundle\AssetLoaderBundle\AssetLoader\AssetDOMLoader:
         class: IDCI\Bundle\AssetLoaderBundle\AssetLoader\AssetDOMLoader
         arguments:
-            - @event_dispatcher
-            - @idci_asset_loader.asset_renderer
-            - @idci_asset_loader.asset_provider.registry
+            - '@event_dispatcher'
+            - '@IDCI\Bundle\AssetLoaderBundle\AssetRenderer\AssetRenderer'
+            - '@IDCI\Bundle\AssetLoaderBundle\AssetProvider\AssetProviderRegistry'
 
-    idci_asset_loader.asset_dom_loader_event_subscriber:
+    IDCI\Bundle\AssetLoaderBundle\Event\Subscriber\AssetDOMLoaderEventSubscriber:
         class: IDCI\Bundle\AssetLoaderBundle\Event\Subscriber\AssetDOMLoaderEventSubscriber
         arguments:
-            - @idci_asset_loader.asset_renderer
-            - @idci_asset_loader.asset_provider.registry
-            - %idci_asset_loader.providers.load_all%
-            - %idci_asset_loader.providers.load_only%
+            - '@IDCI\Bundle\AssetLoaderBundle\AssetRenderer\AssetRenderer'
+            - '@IDCI\Bundle\AssetLoaderBundle\AssetProvider\AssetProviderRegistry'
+            - '%idci_asset_loader.providers.load_all%'
+            - '%idci_asset_loader.providers.load_only%'
         tags:
             - { name: kernel.event_subscriber }

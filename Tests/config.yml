@@ -6,7 +6,7 @@ twig:
         '%kernel.root_dir%/templates': twig_path
 
 services:
-    fake_asset_provider:
+    IDCI\Bundle\AssetLoaderBundle\Tests\Fixtures\AssetProvider\FakeAssetProvider:
         class: IDCI\Bundle\AssetLoaderBundle\Tests\Fixtures\AssetProvider\FakeAssetProvider
         tags:
             - { name: idci_asset_loader.asset_provider, alias: fake_asset_provider }

@@ -18,11 +18,11 @@ class AssetProviderCompilerPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
-        if (!$container->hasDefinition('idci_asset_loader.asset_provider.registry')) {
+        if (!$container->hasDefinition('IDCI\Bundle\AssetLoaderBundle\AssetProvider\AssetProviderRegistry')) {
             return;
         }
 
-        $registryDefinition = $container->getDefinition('idci_asset_loader.asset_provider.registry');
+        $registryDefinition = $container->getDefinition('IDCI\Bundle\AssetLoaderBundle\AssetProvider\AssetProviderRegistry');
 
         foreach ($container->findTaggedServiceIds('idci_asset_loader.asset_provider') as $id => $tags) {
             foreach ($tags as $attributes) {
