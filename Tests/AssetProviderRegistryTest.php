@@ -27,7 +27,7 @@ class AssetProviderRegistryTest extends WebTestCase
         $kernel = new \AppKernel('test', true);
         $kernel->boot();
         $container = $kernel->getContainer();
-        $this->assetProviderRegistry = $container->get('idci_asset_loader.asset_provider.registry');
+        $this->assetProviderRegistry = $container->get(AssetProviderRegistry::class);
     }
 
     public function testHasByAlias()
