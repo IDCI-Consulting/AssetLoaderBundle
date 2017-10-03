@@ -28,7 +28,7 @@ class AssetRendererTest extends WebTestCase
         $kernel = new \AppKernel('test', true);
         $kernel->boot();
         $container = $kernel->getContainer();
-        $this->assetRenderer = $container->get('idci_asset_loader.asset_renderer');
+        $this->assetRenderer = $container->get(AssetRenderer::class);
     }
 
     public function testGetRenderedAssets()
