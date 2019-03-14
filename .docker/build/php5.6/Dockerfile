@@ -8,7 +8,7 @@ RUN docker-php-ext-install mbstring
 RUN apt-get install zlib1g-dev -y && docker-php-ext-install zip
 
 # xdebug
-RUN pecl install xdebug && docker-php-ext-enable xdebug
+RUN pecl install xdebug-2.5.5 && docker-php-ext-enable xdebug
 
 # php.ini
 COPY php.ini /usr/local/etc/php/
